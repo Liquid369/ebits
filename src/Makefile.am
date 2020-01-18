@@ -390,6 +390,7 @@ crypto_libebits_crypto_base_a_SOURCES = \
   crypto/sph_simd.h \
   crypto/sph_echo.h \
   crypto/sph_fugue.h \
+  crypto/sph_shabal.h \
   crypto/sph_shavite.h \
   crypto/sph_sha2.h \
   crypto/sph_haval.h \
@@ -398,6 +399,7 @@ crypto_libebits_crypto_base_a_SOURCES = \
   crypto/lyra2.h \
   crypto/sponge.h \
   crypto/gost_streebog.h \
+  crypto/whirlpool.h \
   crypto/SWIFFTX/SWIFFTX.h
 
 if USE_ASM
