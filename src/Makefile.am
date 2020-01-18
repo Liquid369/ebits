@@ -392,6 +392,7 @@ crypto_libebits_crypto_base_a_SOURCES = \
   crypto/sph_shavite.h \
   crypto/sph_sha2.h \
   crypto/sph_haval.h \
+  crypto/sph_hamsi.h \
   crypto/sph_tiger.h \
   crypto/lyra2.h \
   crypto/sponge.h \
