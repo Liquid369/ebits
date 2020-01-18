@@ -389,6 +389,7 @@ crypto_libebits_crypto_base_a_SOURCES = \
   crypto/sph_cubehash.h \
   crypto/sph_simd.h \
   crypto/sph_echo.h \
+  crypto/sph_fugue.h \
   crypto/sph_shavite.h \
   crypto/sph_sha2.h \
   crypto/sph_haval.h \
