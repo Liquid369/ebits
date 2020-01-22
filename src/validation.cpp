@@ -1142,16 +1142,16 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
 
 CAmount GetBlockSubsidy(int nPrevHeight, const Consensus::Params& consensusParams, bool fSuperblockPartOnly)
 {
-    if (nPrevHeight == 0)      return 2350000 * COIN;
-    if (nPrevHeight < 25000)  return 25 * COIN;
-    if (nPrevHeight < 151200 && nPrevHeight >= 25000)  return 10 * COIN;
+    if (nPrevHeight == 0)                               return 2500000 * COIN;
+    if (nPrevHeight < 25000)                            return 25 * COIN;
+    if (nPrevHeight < 151200 && nPrevHeight >= 25000)   return 10 * COIN;
     if (nPrevHeight < 302400 && nPrevHeight >= 151200)  return 8 * COIN;
     return 6 * COIN;
 }
 
 CAmount GetMasternodePayment(int nHeight, CAmount blockValue)
 {
-    return blockValue * 0.7;
+    return blockValue * 0.5;
 }
 
 bool IsInitialBlockDownload()
