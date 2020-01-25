@@ -138,8 +138,8 @@ public:
         nPruneAfterHeight = 100000;
         nMaxReorganizationDepth = 100;
 
-        uint32_t nTime = 1579206640;	
-	    uint32_t nNonce = 3908;	
+        uint32_t nTime = 1579737225;	
+	    uint32_t nNonce = 134702;	
 
         if (nNonce == 0) {	
 	  while (UintToArith256(genesis.GetPoWHash()) > UintToArith256(consensus.powLimit)) {	
@@ -153,7 +153,7 @@ public:
         genesis = CreateGenesisBlock(nTime, nNonce, 0x1f00ffff, 4, 0 * COIN);
 	    //genesis = CreateGenesisBlock(1577116810, 169713985, 0x1f00ffff, 4, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("8993c105a273ed09bdce4ff2cf101c439f747826b36f6a6341f949ce9a50781f"));
+        assert(consensus.hashGenesisBlock == uint256S("0e12a058e7ca56c84ed1660ed651b8eff12580405b418d22edcf268ea4fefdad"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 34);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 33);
@@ -176,7 +176,7 @@ public:
 
         checkpointData = {
             {
-                { 0, uint256S("8993c105a273ed09bdce4ff2cf101c439f747826b36f6a6341f949ce9a50781f") },
+                { 0, uint256S("0e12a058e7ca56c84ed1660ed651b8eff12580405b418d22edcf268ea4fefdad") },
             }
         };
 
