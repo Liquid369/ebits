@@ -231,6 +231,7 @@ bool fTxIndex = false;
 bool fHavePruned = false;
 bool fPruneMode = false;
 bool fIsBareMultisigStd = DEFAULT_PERMIT_BAREMULTISIG;
+bool fSyncQuickly = true;
 bool fRequireStandard = true;
 bool fCheckBlockIndex = false;
 bool fCheckpointsEnabled = DEFAULT_CHECKPOINTS_ENABLED;
@@ -278,6 +279,11 @@ std::set<CBlockIndex*> setDirtyBlockIndex;
 /** Dirty block file entries. */
 std::set<int> setDirtyFileInfo;
 } // anon namespace
+
+bool OkToSyncQuick()
+{
+    return true;
+}
 
 CBlockIndex* FindForkInGlobalIndex(const CChain& chain, const CBlockLocator& locator)
 {
@@ -585,7 +591,7 @@ static bool AcceptToMemoryPoolWorker(const CChainParams& chainparams, CTxMemPool
     if (tx.IsCoinStake())
         return state.DoS(100, error("AcceptToMemoryPoolWorker: coinstake as individual tx"),
                          REJECT_INVALID, "coinstake");
-
+    
     // Reject transactions with witness before segregated witness activates (override with -prematurewitness)
     bool witnessEnabled = IsWitnessEnabled(chainActive.Tip(), chainparams.GetConsensus());
     if (!gArgs.GetBoolArg("-prematurewitness", false) && tx.HasWitness() && !witnessEnabled) {
@@ -1142,10 +1148,10 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
 
 CAmount GetBlockSubsidy(int nPrevHeight, const Consensus::Params& consensusParams, bool fSuperblockPartOnly)
 {
-    if (nPrevHeight == 0)                               return 2500000 * COIN;
-    if (nPrevHeight < 25000)                            return 25 * COIN;
-    if (nPrevHeight < 151200 && nPrevHeight >= 25000)   return 10 * COIN;
-    if (nPrevHeight < 302400 && nPrevHeight >= 151200)  return 8 * COIN;
+    if (nPrevHeight == 0)                               return 3200000 * COIN;
+    if (nPrevHeight < 50000)                            return 25 * COIN;
+    if (nPrevHeight < 201200 && nPrevHeight >= 50000)   return 10 * COIN;
+    if (nPrevHeight < 1002400 && nPrevHeight >= 201200)  return 8 * COIN;
     return 6 * COIN;
 }
 
@@ -3192,8 +3198,9 @@ static bool FindUndoPos(CValidationState &state, int nFile, CDiskBlockPos &pos, 
 static bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true)
 {
     // Check proof of work matches claimed amount
-    if (fCheckPOW && !CheckProofOfWork(block.GetPoWHash(), block.nBits, false, consensusParams))
-        return state.DoS(50, false, REJECT_INVALID, "high-hash", false, "proof of work failed");
+    if (!IsInitialBlockDownload())
+        if (fCheckPOW && !CheckProofOfWork(block.GetPoWHash(), block.nBits, false, consensusParams))
+            return state.DoS(50, false, REJECT_INVALID, "high-hash", false, "proof of work failed");
 
     return true;
 }
@@ -3205,10 +3212,11 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
     if (block.fChecked)
         return true;
 
+
     // Check that the header is valid (particularly PoW).  This is mostly
     // redundant with the call in AcceptBlockHeader.
-    if (!CheckBlockHeader(block, state, consensusParams, fCheckPOW && block.IsProofOfWork()))
-        return false;
+    if (!CheckBlockHeader(block, state, consensusParams, fCheckPOW && block.IsProofOfWork()  && !OkToSyncQuick()))
+        return true;
 
     // Check the merkle root.
     if (fCheckMerkleRoot) {
@@ -3354,6 +3362,11 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationSta
 {
     assert(pindexPrev != nullptr);
     const int nHeight = pindexPrev->nHeight + 1;
+
+        // Test if quicksync is appropriate
+    if (nHeight > QUICKSYNC_UNTIL_HEIGHT)
+        fSyncQuickly = false;
+
     const Consensus::Params& consensusParams = params.GetConsensus();
 
     // Check against checkpoints
@@ -3545,7 +3558,7 @@ bool CChainState::AcceptBlockHeader(const CBlockHeader& block, CValidationState&
             return true;
         }
 
-        if (!CheckBlockHeader(block, state, chainparams.GetConsensus(), false))
+        if (!CheckBlockHeader(block, state, chainparams.GetConsensus(), false && !OkToSyncQuick()))
             return error("%s: Consensus::CheckBlockHeader: %s, %s", __func__, hash.ToString(), FormatStateMessage(state));
 
         // Get prev block index
@@ -3810,6 +3823,7 @@ bool ProcessNewBlock(const CChainParams& chainparams, const std::shared_ptr<cons
         if (!ret) {
             GetMainSignals().BlockChecked(*pblock, state);
             return error("%s: AcceptBlock FAILED (%s)", __func__, FormatStateMessage(state));
+                return true;   
         }
     }
 

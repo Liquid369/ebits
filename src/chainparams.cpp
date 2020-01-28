@@ -74,7 +74,7 @@ public:
     CMainParams() {
         strNetworkID = "main";
 
-        consensus.nFirstPoSBlock = 500;
+        consensus.nFirstPoSBlock = 250;
         consensus.nInstantSendKeepLock = 24;
         consensus.nBudgetPaymentsStartBlock = 0;
         consensus.nBudgetPaymentsCycleBlocks = 16616;
@@ -92,7 +92,7 @@ public:
         //consensus.powLimit = uint256S("0000f000000000000000");
         consensus.posLimit = uint256S("0007ffff00000000000000000000000000000000000000000000000000000000");
         consensus.nPowTargetTimespan = 3 * 60;
-        consensus.nPowTargetSpacing = 10 * 60;
+        consensus.nPowTargetSpacing = 3 * 60;
         consensus.nPosTargetSpacing = consensus.nPowTargetSpacing;
         consensus.nPosTargetTimespan = consensus.nPowTargetTimespan;
         consensus.nMasternodeMinimumConfirmations = 4;
@@ -123,37 +123,37 @@ public:
         consensus.nMinimumChainWork = uint256S("0000000000000000000000000000000000000000000000000000000000000000");
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0000000000000000000000000000000000000000000000000000000000000000");
+        consensus.defaultAssumeValid = uint256S("000000000000000000000000000000000000000000000000000000000000000");
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
          * a large 32-bit integer with any alignment.
          */
-        pchMessageStart[0] = 0xa7;
-        pchMessageStart[1] = 0xa4;
-        pchMessageStart[2] = 0xc8;
+        pchMessageStart[0] = 0xa3;
+        pchMessageStart[1] = 0xa6;
+        pchMessageStart[2] = 0xc9;
         pchMessageStart[3] = 0xd3;
-        nDefaultPort = 15350;
+        nDefaultPort = 55350;
         nPruneAfterHeight = 100000;
         nMaxReorganizationDepth = 100;
 
-        uint32_t nTime = 1579737225;	
-	    uint32_t nNonce = 134702;	
+        uint32_t nTime = 1580233900;	
+	    uint32_t nNonce = 27531;	
 
         if (nNonce == 0) {	
 	  while (UintToArith256(genesis.GetPoWHash()) > UintToArith256(consensus.powLimit)) {	
 	    nNonce++;	
-	    genesis = CreateGenesisBlock(nTime, nNonce, 0x1f00ffff, 4, 0 * COIN);	
+	    genesis = CreateGenesisBlock(nTime, nNonce, 0x1f00ffff, 1, 0 * COIN);	
 	    if (nNonce % 128 == 0)	
 	      printf("\rnonce %08x", nNonce);	
 	  }	
         }
         printf("genesis is %s\n", genesis.ToString().c_str());
-        genesis = CreateGenesisBlock(nTime, nNonce, 0x1f00ffff, 4, 0 * COIN);
+        genesis = CreateGenesisBlock(nTime, nNonce, 0x1f00ffff, 1, 0 * COIN);
 	    //genesis = CreateGenesisBlock(1577116810, 169713985, 0x1f00ffff, 4, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0e12a058e7ca56c84ed1660ed651b8eff12580405b418d22edcf268ea4fefdad"));
+        assert(consensus.hashGenesisBlock == uint256S("1bdab6c89a24ecdbac35b6a397249d3d06e691789c33d663a75d8b6e26e663ca"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 34);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 33);
@@ -163,9 +163,10 @@ public:
         bech32_hrp = "eb";
 
         vSeeds.push_back("134.209.198.90");
+        vSeeds.push_back("206.189.193.231");
         //vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
 
-        fMiningRequiresPeers = false;
+        fMiningRequiresPeers = true;
         fDefaultConsistencyChecks = false;
         fRequireStandard = true;
         fMineBlocksOnDemand = false;
@@ -176,11 +177,11 @@ public:
 
         checkpointData = {
             {
-                { 0, uint256S("0e12a058e7ca56c84ed1660ed651b8eff12580405b418d22edcf268ea4fefdad") },
+                { 0, uint256S("1bdab6c89a24ecdbac35b6a397249d3d06e691789c33d663a75d8b6e26e663ca") },
             }
         };
 
-        chainTxData = ChainTxData{ 0, 1, 1.0 };
+        chainTxData = ChainTxData{ 1580233900, 1, 1.0 };
 
         /* disable fallback fee on mainnet */
         m_fallback_fee_enabled = true;

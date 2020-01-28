@@ -46,6 +46,8 @@ struct ChainTxData;
 struct PrecomputedTransactionData;
 struct LockPoints;
 
+/** Don't verify PoW hash until this height is met */
+static const int QUICKSYNC_UNTIL_HEIGHT = 0;
 /** Default for -whitelistrelay. */
 static const bool DEFAULT_WHITELISTRELAY = true;
 /** Default for -whitelistforcerelay. */
